@@ -359,19 +359,24 @@
 // Onboard SD card
 // Must use soft SPI because Marlin's default hardware SPI is tied to LCD's EXP2
 //
-#if SD_CONNECTION_IS(LCD)
-  #define SDSS                       EXP2_04_PIN
-  #define SD_SS_PIN                         SDSS
-  #define SD_SCK_PIN                 EXP2_02_PIN
-  #define SD_MISO_PIN                EXP2_01_PIN
-  #define SD_MOSI_PIN                EXP2_06_PIN
-  #define SD_DETECT_PIN              EXP2_07_PIN
-#elif SD_CONNECTION_IS(ONBOARD)
-  #define SDIO_SUPPORT
-  #define SDIO_CLOCK                 24000000  // 24MHz
+#if SD_CONNECTION_IS(ONBOARD)
+  #define SD_DETECT_PIN                     PE3
+#elif SD_CONNECTION_IS(LCD) && (BOTH(TOUCH_UI_FTDI_EVE, LCD_FYSETC_TFT81050) || IS_TFTGLCD_PANEL)
+  #define SD_DETECT_PIN              EXP1_01_PIN
+  #define SD_SS_PIN                  EXP1_05_PIN
 #elif SD_CONNECTION_IS(CUSTOM_CABLE)
-  #error "No custom SD drive cable defined for this board."
+  #error "SD CUSTOM_CABLE is not compatible with SKR Mini E3."
 #endif
+
+#define ONBOARD_SPI_DEVICE                     1  // SPI1 -> used only by HAL/STM32F1...
+#define ONBOARD_SD_CS_PIN                   PB8   // Chip select for "System" SD card
+
+#define ENABLE_SPI1
+#define SDSS                   ONBOARD_SD_CS_PIN
+#define SD_SS_PIN              ONBOARD_SD_CS_PIN
+#define SD_SCK_PIN                          PA5
+#define SD_MISO_PIN                         PA6
+#define SD_MOSI_PIN                         PA7
 
 #if ENABLED(BTT_MOTOR_EXPANSION)
   /**        ------                  ------
